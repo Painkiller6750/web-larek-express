@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import cron from 'node-cron';
 import fs from 'fs';
+import { errors } from 'celebrate';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import productsRouter from './routes/products';
 import orderRouter from './routes/order';
@@ -12,7 +13,6 @@ import authRouter from './routes/auth';
 import uploadRouter from './routes/upload';
 import { NotFoundError } from './errors/not-found-error';
 import errorHandler from './middlewares/error-handler';
-import { errors } from 'celebrate';
 import { PORT, DB_ADDRESS } from './config';
 
 const app = express();

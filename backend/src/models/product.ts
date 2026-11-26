@@ -11,7 +11,7 @@ const productSchema = new Schema<IProduct>(
       unique: true, // по заданию 409 при существующем title
     },
     image: {
-      fileName: { type: String, required: true },     // "/images/686ade58.png"
+      fileName: { type: String, required: true }, // "/images/686ade58.png"
       originalName: { type: String, required: true }, // "5_Dots.png"
     },
     category: {

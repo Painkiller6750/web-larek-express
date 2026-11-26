@@ -3,12 +3,11 @@ import { faker } from '@faker-js/faker';
 import Product from '../models/product';
 import { BadRequestError } from '../errors/bad-request-error';
 
-export const createOrder = (req: Request, res: Response, next: NextFunction) => {
+const createOrder = (req: Request, res: Response, next: NextFunction) => {
   const { items, total } = req.body;
-
-  Product.find({ _id: { $in: items } })
+  return Product.find({ _id: { $in: items } })
     .then((products) => {
-      // проверяем, что все товары существуют в базе backend (что-то может например зависнуть в корзине, а уже не быт ьв базе)
+      // проверяем, что все товары существуют в базе
       if (products.length !== items.length) {
         return next(new BadRequestError('Один из товаров не найден'));
       }
@@ -25,3 +24,5 @@ export const createOrder = (req: Request, res: Response, next: NextFunction) => 
     })
     .catch(next);
 };
+
+export default createOrder;

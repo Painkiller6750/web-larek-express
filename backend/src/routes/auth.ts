@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
-import { login, register, logout, refreshAccessToken, getCurrentUser } from '../controllers/auth';
+import {
+  login, register, logout, refreshAccessToken, getCurrentUser,
+} from '../controllers/auth';
 import auth from '../middlewares/auth';
 
 const authRouter = Router();

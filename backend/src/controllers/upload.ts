@@ -6,7 +6,7 @@ export const uploadFile = (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Файл не передан' });
   }
   return res.send({
-    fileName: `/images/${req.file.filename}`,      // "/images/686ade58.png"
-    originalName: req.file.originalname,           // "Dot.png"
+    fileName: `/images/${req.file.filename}`, // "/images/686ade58.png"
+    originalName: req.file.originalname, // "Dot.png"
   });
 };

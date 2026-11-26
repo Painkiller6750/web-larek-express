@@ -54,9 +54,13 @@ export const getProductById = (req: Request, res: Response, next: NextFunction) 
 };
 
 export const createProduct = (req: Request, res: Response, next: NextFunction) => {
-  const { title, image, category, description, price } = req.body;
+  const {
+    title, image, category, description, price,
+  } = req.body;
 
-  Product.create({ title, image, category, description, price })
+  Product.create({
+    title, image, category, description, price,
+  })
     .then((product) => {
       // переносим картинку из tmp в public/images, только если она была передана
       if (image?.fileName) moveFileFromTemp(image.fileName);
@@ -69,7 +73,7 @@ export const updateProduct = (req: Request, res: Response, next: NextFunction) =
   const { productId } = req.params;
 
   Product.findByIdAndUpdate(productId, req.body, {
-    new: true,          // вернуть обновлённый документ, а не старый
+    new: true, // вернуть обновлённый документ, а не старый
     runValidators: true, // проверять схему и при обновлении
   })
     .then((product) => {
