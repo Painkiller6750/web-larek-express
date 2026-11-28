@@ -1,25 +1,20 @@
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
+import { JWT_SECRET, ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from '../config';
+
+export interface TokenPayload {
+  _id: string;
+}
 
 export const createTokens = (userId: string) => {
-  const payload = { _id: userId };
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error('JWT_SECRET не задан — проверьте файл .env');
-  }
-  const accessToken = jwt.sign(payload, secret, {
-    expiresIn: process.env.AUTH_ACCESS_TOKEN_EXPIRY as ms.StringValue, // 10 минут
+  const payload: TokenPayload = { _id: userId };
+  const accessToken = jwt.sign(payload, JWT_SECRET, {
+    expiresIn: ACCESS_TOKEN_EXPIRY as ms.StringValue,
   });
-  const refreshToken = jwt.sign(payload, secret, {
-    expiresIn: process.env.AUTH_REFRESH_TOKEN_EXPIRY as ms.StringValue, // неделя
+  const refreshToken = jwt.sign(payload, JWT_SECRET, {
+    expiresIn: REFRESH_TOKEN_EXPIRY as ms.StringValue,
   });
   return { accessToken, refreshToken };
 };
 
-export const verifyToken = (token: string) => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error('JWT_SECRET не задан — проверьте файл .env');
-  }
-  return jwt.verify(token, secret) as { _id: string };
-};
+export const verifyToken = (token: string) => jwt.verify(token, JWT_SECRET) as { _id: string };

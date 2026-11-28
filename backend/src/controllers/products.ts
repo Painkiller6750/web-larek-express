@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import Product from '../models/product';
-import { BadRequestError } from '../errors/bad-request-error';
-import { NotFoundError } from '../errors/not-found-error';
-import { ConflictError } from '../errors/conflict-error';
+import BadRequestError from '../errors/bad-request-error';
+import NotFoundError from '../errors/not-found-error';
+import ConflictError from '../errors/conflict-error';
 
 // Перенос файла из временной папки в постоянную
 const moveFileFromTemp = (fileName: string) => {
@@ -30,10 +30,10 @@ const handleProductError = (err: unknown, next: NextFunction) => {
   if (err instanceof Error && err.message.includes('E11000')) {
     return next(new ConflictError('Товар с таким названием уже существует'));
   }
-  next(err);
+  return next(err);
 };
 
-export const getProducts = (req: Request, res: Response, next: NextFunction) => {
+export const getProducts = (_req: Request, res: Response, next: NextFunction) => {
   Product.find({})
     .then((products) => res.send({ items: products, total: products.length }))
     .catch(next);
@@ -42,14 +42,16 @@ export const getProducts = (req: Request, res: Response, next: NextFunction) => 
 export const getProductById = (req: Request, res: Response, next: NextFunction) => {
   Product.findById(req.params.productId)
     .then((product) => {
-      if (!product) return next(new NotFoundError('Товар не найден'));
+      if (!product) {
+        return next(new NotFoundError('Товар не найден'));
+      }
       return res.send(product);
     })
     .catch((err) => {
       if (err instanceof Error && err.name === 'CastError') {
         return next(new BadRequestError('Невалидный _id товара'));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -77,7 +79,9 @@ export const updateProduct = (req: Request, res: Response, next: NextFunction) =
     runValidators: true, // проверять схему и при обновлении
   })
     .then((product) => {
-      if (!product) return next(new NotFoundError('Товар не найден'));
+      if (!product) {
+        return next(new NotFoundError('Товар не найден'));
+      }
       if (req.body.image?.fileName) moveFileFromTemp(req.body.image.fileName);
       return res.send(product);
     })
@@ -89,7 +93,9 @@ export const deleteProduct = (req: Request, res: Response, next: NextFunction) =
 
   Product.findByIdAndDelete(productId)
     .then((product) => {
-      if (!product) return next(new NotFoundError('Товар не найден'));
+      if (!product) {
+        return next(new NotFoundError('Товар не найден'));
+      }
       // триггер post('findOneAndDelete') в модели удалит файл картинки
       return res.send(product); // возвращаем удалённый товар — как в задании
     })

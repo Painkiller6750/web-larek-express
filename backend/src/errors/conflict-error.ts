@@ -1,8 +1,9 @@
-export class ConflictError extends Error {
-  statusCode = 409;
+import ApiError from './api-error';
 
+class ConflictError extends ApiError {
   constructor(message: string) {
-    super(message);
-    this.name = 'ConflictError';
+    super(409, message);
   }
 }
+
+export default ConflictError;

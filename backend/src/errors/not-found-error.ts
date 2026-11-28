@@ -1,8 +1,9 @@
-export class NotFoundError extends Error {
-  statusCode = 404;
+import ApiError from './api-error';
 
+class NotFoundError extends ApiError {
   constructor(message: string) {
-    super(message);
-    this.name = 'NotFoundError';
+    super(404, message);
   }
 }
+
+export default NotFoundError;

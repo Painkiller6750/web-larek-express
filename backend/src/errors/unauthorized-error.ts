@@ -1,8 +1,9 @@
-export class UnauthorizedError extends Error {
-  statusCode = 401;
+import ApiError from './api-error';
 
+class UnauthorizedError extends ApiError {
   constructor(message: string) {
-    super(message);
-    this.name = 'UnauthorizedError';
+    super(401, message);
   }
 }
+
+export default UnauthorizedError;

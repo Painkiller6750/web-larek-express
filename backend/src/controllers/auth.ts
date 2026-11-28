@@ -3,10 +3,10 @@ import bcrypt from 'bcryptjs';
 import ms from 'ms';
 import mongoose from 'mongoose';
 import User from '../models/user';
-import { BadRequestError } from '../errors/bad-request-error';
-import { NotFoundError } from '../errors/not-found-error';
-import { UnauthorizedError } from '../errors/unauthorized-error';
-import { ConflictError } from '../errors/conflict-error';
+import BadRequestError from '../errors/bad-request-error';
+import NotFoundError from '../errors/not-found-error';
+import UnauthorizedError from '../errors/unauthorized-error';
+import ConflictError from '../errors/conflict-error';
 import { createTokens, verifyToken } from '../utils/jwt';
 
 const REFRESH_COOKIE_OPTIONS = {

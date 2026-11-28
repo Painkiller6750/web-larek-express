@@ -11,7 +11,7 @@ import productsRouter from './routes/products';
 import orderRouter from './routes/order';
 import authRouter from './routes/auth';
 import uploadRouter from './routes/upload';
-import { NotFoundError } from './errors/not-found-error';
+import NotFoundError from './errors/not-found-error';
 import errorHandler from './middlewares/error-handler';
 import { PORT, DB_ADDRESS } from './config';
 
@@ -37,7 +37,7 @@ app.use('/auth', authRouter);
 app.use('/upload', uploadRouter);
 
 // маршрут не найден — 404
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
   next(new NotFoundError('Маршрут не найден'));
 });
 

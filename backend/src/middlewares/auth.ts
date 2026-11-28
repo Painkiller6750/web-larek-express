@@ -1,21 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
-import { UnauthorizedError } from '../errors/unauthorized-error';
-import { verifyToken } from '../utils/jwt';
+import jwt from 'jsonwebtoken';
+import UnauthorizedError from '../errors/unauthorized-error';
+import { JWT_SECRET } from '../config';
 
-// расширяем тип Request, чтобы TS знал про req.user
-export interface RequestWithUser extends Request {
-  user?: { _id: string };
-}
+const auth = (req: Request, _res: Response, next: NextFunction) => {
+  const token = req.cookies.refreshToken;
 
-export default (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     return next(new UnauthorizedError('Необходима авторизация'));
   }
+
+  let payload: { _id: string };
   try {
-    (req as RequestWithUser).user = verifyToken(authHeader.replace('Bearer ', ''));
-    next();
+    payload = jwt.verify(token, JWT_SECRET) as { _id: string };
   } catch {
-    next(new UnauthorizedError('Токен просрочен или невалиден'));
+    return next(new UnauthorizedError('Токен просрочен или невалиден'));
   }
+
+  (req as Request & { user?: { _id: string } }).user = { _id: payload._id };
+  return next();
 };
+
+export default auth;

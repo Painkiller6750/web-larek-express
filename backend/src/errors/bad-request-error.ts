@@ -1,8 +1,9 @@
-export class BadRequestError extends Error {
-  statusCode = 400;
+import ApiError from './api-error';
 
+class BadRequestError extends ApiError {
   constructor(message: string) {
-    super(message);
-    this.name = 'BadRequestError';
+    super(400, message);
   }
 }
+
+export default BadRequestError;

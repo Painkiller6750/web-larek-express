@@ -1,21 +1,22 @@
+import { Request } from 'express';
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import BadRequestError from '../errors/bad-request-error';
 
-const TEMP_DIR = path.join(__dirname, '../tmp');
-if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
+const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/gif'];
 
-const fileMiddleware = multer({
-  storage: multer.diskStorage({
-    destination: (_, __, cb) => cb(null, TEMP_DIR),
-    // уникальное, не пользовательское имя
-    filename: (_, file, cb) => cb(null, `${crypto.randomUUID()}${path.extname(file.originalname)}`),
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // максимум 5 МБ
-  fileFilter: (_, file, cb) => {
-    if (file.mimetype.startsWith('image/')) return cb(null, true);
-    cb(new Error('Можно загружать только изображения'));
-  },
-});
+const storage = multer.memoryStorage();
 
-export default fileMiddleware;
+const fileFilter = (
+  _req: Request,
+  file: { mimetype: string },
+  cb: multer.FileFilterCallback,
+) => {
+  if (ALLOWED_MIME.includes(file.mimetype)) {
+    return cb(null, true);
+  }
+  return cb(new BadRequestError('Допустимы только изображения (jpeg, png, gif)'));
+};
+
+const upload = multer({ storage, fileFilter });
+
+export default upload;

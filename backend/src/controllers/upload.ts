@@ -1,12 +1,11 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import BadRequestError from '../errors/bad-request-error';
 
-// multer кладёт загруженный файл в req.file
-export const uploadFile = (req: Request, res: Response) => {
+const uploadFile = (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) {
-    return res.status(400).send({ message: 'Файл не передан' });
+    return next(new BadRequestError('Файл не передан'));
   }
-  return res.send({
-    fileName: `/images/${req.file.filename}`, // "/images/686ade58.png"
-    originalName: req.file.originalname, // "Dot.png"
-  });
+  return res.send({ fileName: `/images/${req.file.originalname}` });
 };
+
+export default uploadFile;
